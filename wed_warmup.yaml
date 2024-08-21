@@ -1,0 +1,33 @@
+---
+- name: Wednesday Warmup
+  hosts: redfish
+  connection: local
+  gather_facts: false
+  tasks: 
+    - name: Get CPU model
+      community.general.redfish_info:
+        category: Systems
+        command: GetCpuInventory
+        baseuri: "{{ baseuri }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+      register: cpuinventory
+    - name: show CPU info
+      debug:
+        var: cpuinventory
+    - name: rocket scientist bonus
+      debug:
+        var: cpuinventory.redfish_facts.cpu.entries.0.1.0.Model
+
+    - name: Restart system power gracefully
+      community.general.redfish_command:
+        category: Systems
+        command: PowerForceOff
+        resource_id: 437XR1138R2
+        baseuri: "{{ baseuri }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+      register: powerresult
+    - name: show power status
+      debug:
+        var: powerresult
